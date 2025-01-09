@@ -1,0 +1,44 @@
+.l-p-con {
+    height: calc(100vh - 50px);
+}
+
+.l-p-hd{
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.l-p-hd h1 {
+    font-size: 64px;
+    color: #004AAD;
+}
+
+.l-p-hd p {
+    font-size: 24px;
+}
+
+.l-p-hd span{
+    color: #005B1A ;
+}
+
+.l-p-hd button {
+    color: #004AAD;
+    background: #D9D9D9;
+    border: none;
+    font-size: 32px;
+    padding: 10px 20px;
+    border-radius: 50px;
+}
+
+.l-p-con {
+ display: flex;
+ flex-direction: column;
+ justify-content: center;
+}
+
+
+
