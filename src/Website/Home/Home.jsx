@@ -3,6 +3,7 @@ import Navbar from '../Navbar/Navbar'
 import MobileNavbar from '../Navbar/MobileNavbar'
 import LandingPage from './LandingPage/LandingPage'
 import GlobalEducation from './GlobalEducation/GlobalEducation'
+import HomeCarousel from './HomeCarousel/HomeCarousel'
 
 const Home = () => {
   return (
@@ -11,6 +12,7 @@ const Home = () => {
         <MobileNavbar />
         <LandingPage />
         <GlobalEducation />
+        <HomeCarousel />
     </div>
   )
 }
