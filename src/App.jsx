@@ -16,10 +16,10 @@ const App = () => {
       {/* <ForgotPassword /> */}
       {/* <Registration /> */}
      {/* <Home /> */}
-     {/* <About /> */}
+     <About />
      {/* <Contact /> */}
      {/* <Footer />  */}
-       <AgencyDashboard />
+       {/* <AgencyDashboard /> */}
        {/* <UniversityProfile /> Profile of university */}
     </>
   );

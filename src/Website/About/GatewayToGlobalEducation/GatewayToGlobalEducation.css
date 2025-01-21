@@ -1,7 +1,12 @@
 .abt-ln-con-main-wrap{
     height: calc(100vh - 100px);
-    
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
+    
+
 .abt-ln-con-main {
     max-width: 800px;
     
@@ -43,7 +48,7 @@
     color: #ffffff;
 }
 
-.abt-ln-con-sub-btn1{
+.abt-ln-con-sub-btn2{
     color: #000000;
     background: #ffffff;
 }

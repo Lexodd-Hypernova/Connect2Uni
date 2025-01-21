@@ -1,6 +1,7 @@
 import React from 'react'
 import ReadMoreIcon from '../../../assets/read-more/ReadMore.svg'
 import './GlobalEducation.css'
+import ReadMore from '../../ReadMore/ReadMore'
 
 const GlobaEducation = () => {
   return (
@@ -15,10 +16,7 @@ const GlobaEducation = () => {
     <h4>
       For more details
     </h4>
-    <span className='gl-ed-con-rd-m'>
-     <p> Read More </p>
-      <img src={ReadMoreIcon} alt="read-more-icon" />
-    </span>
+    <ReadMore />
     </div>
   )
 }

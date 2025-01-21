@@ -1,0 +1,223 @@
+.sliderWrapper{
+    min-height: 100vh;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 6% 12%;
+}
+
+.slide{
+    height: 90vh;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+.content{
+    position: absolute;
+    top: 72%;
+    left: 8%;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: start;
+}
+
+.content p{
+    color:  #005B1A;
+    font-family: Poppins;
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 24.918px; /* 103.826% */
+}
+
+.content h2{
+    font-size: 32px;
+    color: #000000;
+}
+
+.content button{
+    height: 42px;
+    width: 140px;
+    border: none;
+    background-color: rgba(255, 255, 255, 0.5);
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 500;
+    color: #fff;
+    position: relative;
+}
+
+.content button span{
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.content button span:nth-of-type(1):after{
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;    
+    height: 1px;
+    width: 15px;
+    background-color: #fff;
+}
+.content button span:nth-of-type(1):before{
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;    
+    height: 15px;
+    width: 1px;
+    background-color: #fff;
+}
+
+.content button span:nth-of-type(2){
+    top: 100%;
+    left: 0;
+}
+
+.content button span:nth-of-type(2):after{
+    content: '';
+    position: absolute;
+    top: 0%;
+    left: 0;    
+    height: 1px;
+    width: 15px;
+    background-color: #fff;
+}
+.content button span:nth-of-type(2):before{
+    content: '';
+    position: absolute;
+    bottom: 0%;
+    left: 0;    
+    height: 15px;
+    width: 1px;
+    background-color: #fff;
+}
+
+.content button span:nth-of-type(3){
+    top: 0%;
+    left: 100%;
+}
+
+.content button span:nth-of-type(3):after{
+    content: '';
+    position: absolute;
+    top: 0%;
+    right: 0;    
+    height: 1px;
+    width: 15px;
+    background-color: #fff;
+}
+.content button span:nth-of-type(3):before{
+    content: '';
+    position: absolute;
+    top: 0%;
+    left: 0;    
+    height: 15px;
+    width: 1px;
+    background-color: #fff;
+}
+
+.content button span:nth-of-type(4){
+    top: 100%;
+    left: 100%;
+}
+
+.content button span:nth-of-type(4):after{
+    content: '';
+    position: absolute;
+    top: 0%;
+    right: 0;    
+    height: 1px;
+    width: 15px;
+    background-color: #fff;
+}
+.content button span:nth-of-type(4):before{
+    content: '';
+    position: absolute;
+    bottom: 0%;
+    left: 0;    
+    height: 15px;
+    width: 1px;
+    background-color: #fff;
+}
+
+.swiper{
+    width: 100% !important;
+}
+
+.slide1{
+    background: url(../../../assets/home-page/Connect2Uni-Application-processs.svg);
+    background-position: top;
+    background-repeat: no-repeat;
+    /* background-size: cover; */
+    border-radius: 15px;
+}
+.slide2{
+    background: url(../../../assets/home-page/Connect2Uni-College-Search-Filters.svg);
+    background-position: top;
+    background-repeat: no-repeat;
+    /* background-size: cover; */
+    border-radius: 15px;
+}
+.slide3{
+    background: url(../../../assets/home-page/Connect2Uni-Visa-Gudiance.svg);
+    background-position: top;
+    background-repeat: no-repeat;
+    /* background-size: cover; */
+    border-radius: 15px;
+}
+
+.slide4{
+    background: url(../../../assets/home-page/Connect2Uni-Notifications.svg);
+    background-position: top;
+    background-repeat: no-repeat;
+    /* background-size: cover; */
+    border-radius: 15px;
+}
+
+.Social{
+    position: absolute;
+    top: 40%;
+    right: 50px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.Social i{
+    color: #fff;
+    height: 40px;
+    width: 40px;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 0.8px solid rgba(255, 255, 255, 0.5);
+    transition: .6s;
+}
+
+.Social i:hover{
+    background-color: rgba(255, 255, 255, 0.2);
+    color: #fff;
+}
+
+@media screen and (max-width:768px) {
+    .Social{
+        z-index: 9;
+    }
+
+    .sliderWrapper{
+        padding: 6% 20%;
+    }
+
+    .content{
+        top: 64%;
+    }
+}

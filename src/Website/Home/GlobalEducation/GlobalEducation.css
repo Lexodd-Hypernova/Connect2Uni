@@ -43,26 +43,3 @@
     font-weight: 500;
 }
 
-.gl-ed-con-rd-m {
-    display: flex;
-    align-items: center;
-    border-radius: 41.5px;
-    border: 1px solid #000;
-    background: rgba(217, 217, 217, 0.40);
-    padding: 5px 25px;
-}
-
-.gl-ed-con-rd-m p {
-    color: #000;
-    font-family: Poppins;
-    font-size: 25.286px;
-    font-style: normal;
-    font-weight: 500;
-    line-height: 59px;
-    display: inline;
-    margin:  0 7px 0 0;
-}
-
-.gl-ed-con-rd-m img {
-    margin: 0 0 0 7px;
-}
