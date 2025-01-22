@@ -21,20 +21,7 @@ const Sliders = () => {
         variableWidth: true, // Enable variable width to avoid gaps
         pauseOnHover: false, // Prevent pausing on hover
       };
-      var settings2 = {
-        rtl: true,
-         dots: false,
-        infinite: true, // Infinite loop
-        autoplay: true, // Enable autoplay
-        autoplaySpeed: 0, // No delay between transitions
-        speed: 5000, // Transition speed (higher value for smoother scroll)
-        cssEase: "linear", // Linear easing for continuous scroll
-        slidesToShow: 1, // Show one slide at a time
-        slidesToScroll: 1, // Scroll one slide at a time
-        arrows: false, // Disable arrows
-        variableWidth: true, // Enable variable width to avoid gaps
-        pauseOnHover: false, // Prevent pausing on hover
-      };
+   
   return (
     <div className="slider-sections">
           <link
@@ -64,27 +51,16 @@ const Sliders = () => {
             <div>
               <img src={Img4} />
             </div>
-           
-          </Slider>
-          <br />
-          <Slider autoplay {...settings2}>
             <div>
               <img src={Img} />
             </div>
             <div>
               <img src={Img1} />
             </div>
-            <div>
-              <img src={Img2} />
-            </div>
-            <div>
-              <img src={Img3} />
-            </div>
-            <div>
-              <img src={Img4} />
-            </div>
+             
            
           </Slider>
+        
         </div>
   )
 }

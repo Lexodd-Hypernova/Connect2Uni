@@ -5,6 +5,8 @@ import MobileNavbar from '../Navbar/MobileNavbar'
 import FeatureSection from './FeatureSection/FeatureSection'
 import OurTeams from './OurTeam/OurTeams'
 import Sliders from './Sliders/Sliders'
+import TestimonialCarousel from './Testimonials/TestimonialCarousel'
+import ContactSection from './ContactSection/ContactSection'
 
 const About = () => {
   return (
@@ -15,6 +17,8 @@ const About = () => {
         <FeatureSection />
         <OurTeams />
         <Sliders />
+        <TestimonialCarousel />
+        <ContactSection />
     </div>
   )
 }

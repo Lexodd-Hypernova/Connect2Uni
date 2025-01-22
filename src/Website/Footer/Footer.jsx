@@ -45,8 +45,8 @@ const Footer = () => {
             <div className="footer-address">
                 <span>
                     <img src="" alt="" />
-                    Lorem ipsum dolor sit, amet consectetur. <br />
-                    Consequatur quaerat fugit, minus voluptates voluptate quam, sapiente officia .
+                    Random address, amet consectetur. <br />
+                    Consequatur quaerat fugit, sapiente officia .
                 </span>
             </div>
         </div>
