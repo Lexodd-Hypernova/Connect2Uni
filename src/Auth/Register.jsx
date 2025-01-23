@@ -15,28 +15,15 @@ const Registration = () => {
     middleName: "",
     lastName: "",
     dob: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-    countryCode: "+1",
-    phoneNumber: "",
-    document: null,
+    gender: "",
   });
 
-  const [documentPreview, setDocumentPreview] = useState(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    setFormData({ ...formData, document: file });
-    if (file) {
-      setDocumentPreview(URL.createObjectURL(file));
-    }
-  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -46,7 +33,7 @@ const Registration = () => {
   // Calculate the minimum date for DOB (15 years ago from today)
   const getMinDate = () => {
     const today = new Date();
-    today.setFullYear(today.getFullYear() - 15);
+    today.setFullYear(today.getFullYear() - 14);
     return today.toISOString().split("T")[0];
   };
 
@@ -64,12 +51,12 @@ const Registration = () => {
       >
         {/* Heading */}
         <Typography variant="h4" align="center" gutterBottom>
-          Registration Page
+          Personal Information
         </Typography>
 
         {/* Name Inputs */}
         <Box mt={3}>
-          <Stack direction="row" spacing={2}>
+          <Stack spacing={2}>
             <TextField
               label="First Name"
               name="firstName"
@@ -116,127 +103,22 @@ const Registration = () => {
           />
         </Box>
 
-        {/* Email Input */}
+        {/* Gender Input */}
         <Box mt={3}>
           <TextField
-            label="Email"
-            type="email"
-            name="email"
+            select
+            label="Gender"
+            name="gender"
             variant="outlined"
             fullWidth
             size="small"
-            value={formData.email}
+            value={formData.gender}
             onChange={handleChange}
-          />
-        </Box>
-
-        {/* Password Input */}
-        <Box mt={3}>
-          <TextField
-            label="Password"
-            type="password"
-            name="password"
-            variant="outlined"
-            fullWidth
-            size="small"
-            value={formData.password}
-            onChange={handleChange}
-          />
-        </Box>
-
-        {/* Confirm Password Input */}
-        <Box mt={3}>
-          <TextField
-            label="Confirm Password"
-            type="password"
-            name="confirmPassword"
-            variant="outlined"
-            fullWidth
-            size="small"
-            value={formData.confirmPassword}
-            onChange={handleChange}
-          />
-        </Box>
-
-        {/* Phone Number Input */}
-        <Box mt={3}>
-          <Stack direction="row" spacing={2}>
-            <TextField
-              select
-              label="Country Code"
-              name="countryCode"
-              variant="outlined"
-              size="small"
-              style={{ maxWidth: "120px" }}
-              value={formData.countryCode}
-              onChange={handleChange}
-            >
-             <MenuItem value="+1">
-    <img 
-      src="https://flagcdn.com/us.svg" 
-      alt="USA Flag" 
-      width="20" 
-      style={{ marginRight: "8px" }} 
-    />
-    +1 (USA)
-  </MenuItem>
-  <MenuItem value="+91">
-    <img 
-      src="https://flagcdn.com/in.svg" 
-      alt="India Flag" 
-      width="20" 
-      style={{ marginRight: "8px" }} 
-    />
-    +91 (India)
-  </MenuItem>
-  <MenuItem value="+44">
-    <img 
-      src="https://flagcdn.com/gb.svg" 
-      alt="UK Flag" 
-      width="20" 
-      style={{ marginRight: "8px" }} 
-    />
-    +44 (UK)
-  </MenuItem>
-            </TextField>
-            <TextField
-              label="Phone Number"
-              type="tel"
-              name="phoneNumber"
-              variant="outlined"
-              fullWidth
-              size="small"
-              value={formData.phoneNumber}
-              onChange={handleChange}
-            />
-          </Stack>
-        </Box>
-
-        {/* File Upload */}
-        <Box mt={3}>
-          <Button
-            variant="outlined"
-            component="label"
-            fullWidth
-            sx={{ textAlign: "left" }}
           >
-            Upload Document
-            <input
-              type="file"
-              name="document"
-              hidden
-              onChange={handleFileChange}
-            />
-          </Button>
-          {/* Document Preview */}
-          {documentPreview && (
-            <Box mt={2}>
-              <Typography variant="body2">Preview:</Typography>
-              <a href={documentPreview} target="_blank" rel="noopener noreferrer">
-                View Uploaded Document
-              </a>
-            </Box>
-          )}
+            <MenuItem value="Male">Male</MenuItem>
+            <MenuItem value="Female">Female</MenuItem>
+            <MenuItem value="Other">Other</MenuItem>
+          </TextField>
         </Box>
 
         {/* Save & Next Button */}

@@ -13,7 +13,7 @@ const WhyChooseUs = () => {
   return (
     <div className="wh-ch-us-cont">
         <div className='wh-ch-us-up'>
-            <h1>Why <spna>Choose</spna> Us?</h1>
+            <h1>Why <span>Choose</span> Us?</h1>
             <ReadMore />
         </div>
     <div className='wh-ch-us-ins'>

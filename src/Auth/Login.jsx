@@ -9,12 +9,13 @@ import {
   Checkbox,
   InputAdornment,
   IconButton,
-  Link,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { Link, useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
 
   const handleTogglePassword = () => {
     setShowPassword((prev) => !prev);
@@ -63,16 +64,14 @@ const Login = () => {
             type={showPassword ? "text" : "password"}
             required
             variant="outlined"
-            slotProps={{
-              input: {
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton onClick={handleTogglePassword} edge="end">
-                      {showPassword ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              },
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton onClick={handleTogglePassword} edge="end">
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
             }}
           />
 
@@ -89,7 +88,7 @@ const Login = () => {
               control={<Checkbox color="primary" />}
               label="Remember me"
             />
-            <Link href="#" variant="body2">
+            <Link to="/forgot-password" style={{ textDecoration: "none" }}>
               Forgot password?
             </Link>
           </Box>
@@ -97,7 +96,7 @@ const Login = () => {
           {/* Login Button */}
           <Button
             type="submit"
-            fullWidth={false}
+            fullWidth
             variant="contained"
             color="primary"
             sx={{ mt: 3, mb: 2 }}
@@ -108,7 +107,14 @@ const Login = () => {
           {/* No Account Yet? Register */}
           <Typography variant="body2" align="center">
             No account yet?{" "}
-            <Link href="#" variant="body2">
+            <Link
+              to="/register"
+              style={{
+                textDecoration: "none",
+                color: "#1976d2",
+                cursor: "pointer",
+              }}
+            >
               Register
             </Link>
           </Typography>
