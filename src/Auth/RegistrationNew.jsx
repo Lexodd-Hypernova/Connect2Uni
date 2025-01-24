@@ -136,7 +136,9 @@ const Registration = () => {
       if (formData.englishRequirement === "Yes" && !formData.testScore) {
         newErrors.testScore = "Test Score is required.";
       }
-      if (!formData.documentUpload) newErrors.documentUpload = "Document Upload is required.";
+      if (formData.englishRequirement === "Yes" && !formData.documentUpload) {
+        newErrors.documentUpload = "Document Upload is required.";
+      }
     }
 
     // If there are errors, set them and stop proceeding
@@ -337,12 +339,18 @@ const Registration = () => {
                 error={!!errors.mobileNo}
                 helperText={errors.mobileNo}
               />
+              <Typography variant="body1" sx={{ mt: 2 }}>
+                Upload Passport *
+              </Typography>
+              <Typography variant="body2" color="textSecondary" sx={{ mb: 1 }}>
+                The details in the passport should be clearly visible.
+              </Typography>
               <input
                 type="file"
                 accept=".jpg, .png, .pdf, .doc, .docx"
                 name="passportFile"
                 onChange={handleFileChange}
-                style={{ marginTop: "16px" }}
+                style={{ marginTop: "8px" }}
               />
               {errors.passportFile && (
                 <Typography variant="body2" color="error">
@@ -659,19 +667,25 @@ const Registration = () => {
                     error={!!errors.testScore}
                     helperText={errors.testScore}
                   />
+                  <Typography variant="body1" sx={{ mt: 2 }}>
+                    Upload Document *
+                  </Typography>
+                  <Typography variant="body2" color="textSecondary" sx={{ mb: 1 }}>
+                    Upload your English language test score document.
+                  </Typography>
+                  <input
+                    type="file"
+                    accept=".jpg, .png, .pdf, .doc, .docx"
+                    name="documentUpload"
+                    onChange={handleFileChange}
+                    style={{ marginTop: "8px" }}
+                  />
+                  {errors.documentUpload && (
+                    <Typography variant="body2" color="error">
+                      {errors.documentUpload}
+                    </Typography>
+                  )}
                 </>
-              )}
-              <input
-                type="file"
-                accept=".jpg, .png, .pdf, .doc, .docx"
-                name="documentUpload"
-                onChange={handleFileChange}
-                style={{ marginTop: "16px" }}
-              />
-              {errors.documentUpload && (
-                <Typography variant="body2" color="error">
-                  {errors.documentUpload}
-                </Typography>
               )}
             </Stack>
             <Box mt={4} display="flex" justifyContent="space-between">
