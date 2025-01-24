@@ -15,6 +15,7 @@ import {
   Link,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { countryCodes } from "./CountryCodes"; // Import country codes
 
 const Registration = () => {
   const [step, setStep] = useState(1);
@@ -27,6 +28,7 @@ const Registration = () => {
     email: "",
     reEnterEmail: "",
     password: "",
+    countryCode: "+1", // Default country code
     mobileNo: "",
     passportFile: null,
     recentEducation: "",
@@ -53,7 +55,7 @@ const Registration = () => {
     agreeGDPR: false,
   });
   const [showPassword, setShowPassword] = useState(false);
-  const [errors, setErrors] = useState({}); // State to store validation errors
+  const [errors, setErrors] = useState({});
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -328,17 +330,33 @@ const Registration = () => {
                   ),
                 }}
               />
+              <Box display="flex" gap={2}>
               <TextField
-                label="Mobile No *"
-                name="mobileNo"
-                variant="outlined"
-                fullWidth
-                size="small"
-                value={formData.mobileNo}
-                onChange={handleChange}
-                error={!!errors.mobileNo}
-                helperText={errors.mobileNo}
-              />
+                  select
+                  label="Country Code"
+                  name="countryCode"
+                  value={formData.countryCode}
+                  onChange={handleChange}
+                >
+                    {countryCodes.map((country) => (
+                      <MenuItem key={`${country.code}-${country.name}`} value={country.code}>
+                        {`${country.code} (${country.name})`}
+                      </MenuItem>
+                    ))}
+              </TextField>
+              <TextField
+                  label="Mobile No *"
+                  name="mobileNo"
+                  variant="outlined"
+                  fullWidth
+                  size="small"
+                  value={formData.mobileNo}
+                  onChange={handleChange}
+                  error={!!errors.mobileNo}
+                  helperText={errors.mobileNo}
+                  inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }} // Restrict to numbers
+                />
+              </Box>
               <Typography variant="body1" sx={{ mt: 2 }}>
                 Upload Passport *
               </Typography>
