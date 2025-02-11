@@ -1,51 +1,111 @@
-import React from 'react';
-import { Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TextField, InputAdornment, Box } from '@mui/material';
+import SearchIcon from '@mui/icons-material/Search';
 import * as XLSX from 'xlsx';
 
 const StudentInfo = () => {
-  // Dummy data for the table
-  const rows = [
-    { name: 'John Doe', id: 'S001', gender: 'Male', dob: '1995-06-15', phone: '1234567890' },
-    { name: 'Jane Smith', id: 'S002', gender: 'Female', dob: '1996-04-10', phone: '9876543210' },
-    { name: 'Alice Johnson', id: 'S003', gender: 'Female', dob: '1998-01-22', phone: '4561237890' },
-    { name: 'Michael Brown', id: 'S004', gender: 'Male', dob: '1994-12-05', phone: '7891234560' },
-  ];
+  const base_url = 'http://localhost:3000';
+  const [students, setStudents] = useState([]);
+  const [searchTerm, setSearchTerm] = useState(''); // State for search term
+
+  // Fetch data from the API
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(`${base_url}/agency/students`);
+        const data = await response.json();
+        console.log(data);
+        setStudents(data.data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  // Transform the data to the desired format
+  const transformedData = students.map(student => ({
+    name: `${student.firstName} ${student.middleName || ''} ${student.lastName}`,
+    email: student.email,
+    nationality: student.countryApplyingFrom,
+    phone: student.telephoneNumber,
+    preferred_University: student.preferredUniversity,
+  }));
+
+  // Filter data based on search term
+  const filteredData = transformedData.filter(student => {
+    const searchLower = searchTerm.toLowerCase();
+    return (
+      student.name?.toLowerCase().includes(searchLower) ||
+      student.email?.toLowerCase().includes(searchLower) ||
+      student.nationality?.toLowerCase().includes(searchLower) ||
+      student.phone?.toLowerCase().includes(searchLower) ||
+      student.preferred_University?.toLowerCase().includes(searchLower)
+    );
+  });
 
   // Function to export data to Excel
   const exportToExcel = () => {
-    const worksheet = XLSX.utils.json_to_sheet(rows); // Convert rows to Excel sheet
-    const workbook = XLSX.utils.book_new(); // Create a new workbook
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Student Info'); // Append sheet to workbook
-    XLSX.writeFile(workbook, 'StudentInfo.xlsx'); // Save as file
+    const worksheet = XLSX.utils.json_to_sheet(filteredData); // Use filtered data for export
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Student Info');
+    XLSX.writeFile(workbook, 'StudentInfo.xlsx');
   };
 
   return (
     <div style={{ padding: '20px' }}>
-      <h2>Student Information</h2>
+      {/* Header and Search Input */}
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+        marginBottom="20px"
+      >
+        <h2>Student Information</h2>
+        {/* Search Input Field */}
+        <TextField
+          placeholder="Search..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon />
+              </InputAdornment>
+            ),
+          }}
+          style={{ width: '300px' }} // Adjust the width as needed
+        />
+      </Box>
+
+      {/* Table */}
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
             <TableRow>
               <TableCell>Name</TableCell>
-              <TableCell>ID</TableCell>
-              <TableCell>Gender</TableCell>
-              <TableCell>DOB</TableCell>
+              <TableCell>Email</TableCell>
+              <TableCell>Nationality</TableCell>
               <TableCell>Phone Number</TableCell>
+              <TableCell>Preferred University</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map((row, index) => (
+            {filteredData.map((row, index) => (
               <TableRow key={index}>
                 <TableCell>{row.name}</TableCell>
-                <TableCell>{row.id}</TableCell>
-                <TableCell>{row.gender}</TableCell>
-                <TableCell>{row.dob}</TableCell>
+                <TableCell>{row.email}</TableCell>
+                <TableCell>{row.nationality}</TableCell>
                 <TableCell>{row.phone}</TableCell>
+                <TableCell>{row.preferred_University}</TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </TableContainer>
+
+      {/* Export Button */}
       <Button
         variant="contained"
         color="primary"

@@ -81,11 +81,11 @@ const UniversityInfo = () => {
         <DialogContent>
           <AddUniversityForm onClose={handleClose} />
         </DialogContent>
-        <DialogActions>
+        {/* <DialogActions>
           <Button onClick={handleClose} color="secondary">
             Cancel
           </Button>
-        </DialogActions>
+        </DialogActions> */}
       </Dialog>
     </div>
   );
