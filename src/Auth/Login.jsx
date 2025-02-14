@@ -203,10 +203,8 @@ export default Login;
 // const app = express()
 // require('dotenv').config({ path: '.env' })
 // require('./utils/passport'); 
-// app.use(
-//     cors(
-//         {
-//             origin: "*"
-//         }
-//     )
-// )
+
+// app.use(cors({
+//     origin: "http://localhost:5173", // Remove trailing slash
+//     credentials: true
+//   }));
