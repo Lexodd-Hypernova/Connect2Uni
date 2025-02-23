@@ -1,41 +1,74 @@
-import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
-import { Box, Typography, Button, CircularProgress } from "@mui/material";
-import axios from "axios";
-import { useLogout } from "../../Auth/Logout";
+import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { Box, Typography, CircularProgress, Button } from '@mui/material';
+import axios from 'axios';
+import Cookies from 'js-cookie';
+import PaymentForm from './PaymentForm'; // Adjust the import path as needed
 
 const PlatformFee = () => {
   const { payment_prompt } = useSelector((state) => state.auth);
   const navigate = useNavigate();
+  const [paymentIntent, setPaymentIntent] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [showPaymentForm, setShowPaymentForm] = useState(false); // State to control the visibility of the payment form
 
-  const base_url = "http://localhost:3000";
-  
+  const base_url = import.meta.env.VITE_API_URL;
 
-  // Redirect if payment_prompt is not available
+  const token = Cookies.get('refreshtoken');
+      if (!token) {
+        alert("You are not authenticated. Please log in.");
+        return;
+      }
+
   useEffect(() => {
     if (!payment_prompt) {
-      navigate("/student/dashboard"); // ✅ Go back if no payment required
+      navigate("/student/dashboard");
     }
   }, [payment_prompt, navigate]);
 
-  const handlePayment = async () => {
+  const createPaymentIntent = async () => {
+    setLoading(true);
     try {
-      if (!payment_prompt) return; // ✅ Prevent error if payment_prompt is null
-
-      // Make request to backend to get Stripe payment session
-      const response = await axios.post(base_url+payment_prompt.payment_url, {}, { withCredentials: true });
-
-      // Redirect user to Stripe Checkout
-      window.location.href = response.data.checkout_url; // ✅ Redirect to Stripe
+      const response = await axios.post(
+        `${base_url}/student/create-payment-intent`,
+        {}, 
+        { headers:{Authorization: `Bearer ${token}`} }
+      );
+      setPaymentIntent(response.data);
+      console.log(response);
+      
+      setShowPaymentForm(true); // Show the payment form after the payment intent is created
     } catch (error) {
-      console.error("Payment Error:", error);
+      console.error('Error creating payment intent:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleLogout = useLogout()
+  const handlePaymentSuccess = async(paymentIntent) => {
+    console.log('Payment succeeded:', paymentIntent);
+    // Redirect the user or show a success message`
 
-  // ✅ Show loading indicator until payment_prompt is available
+    try {
+      const response = await axios.post(
+        `${base_url}/student/stripe-webhook`,{paymentIntent},
+        { headers: {
+          'Content-Type': 'application/json',
+          'Stripe-Signature': 'whsec_FguvRWfK2NIYfcuzhcrftUHhnZ0bNX4a',
+          Authorization: `Bearer ${token}`
+        } }
+      );
+      
+      console.log(response);
+      
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   if (!payment_prompt) {
     return (
       <Box sx={{ textAlign: "center", mt: 4 }}>
@@ -55,13 +88,24 @@ const PlatformFee = () => {
       <Typography variant="h6" sx={{ mt: 2 }}>
         Amount: {payment_prompt.amount} {payment_prompt.currency}
       </Typography>
-      <Button variant="contained" color="primary" sx={{ mt: 2 }} onClick={handlePayment}>
-        Pay Now
-      </Button>
 
-      <Button variant="contained" color="error" sx={{ mt: 2 }} onClick={handleLogout}>
-        Logout
-      </Button>
+      {/* Pay Now Button */}
+      {!showPaymentForm && (
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={createPaymentIntent}
+          disabled={loading}
+          sx={{ mt: 2 }}
+        >
+          {loading ? <CircularProgress size={24} /> : 'Pay Now'}
+        </Button>
+      )}
+
+      {/* Payment Form (Displayed after clicking Pay Now) */}
+      {showPaymentForm && paymentIntent && (
+        <PaymentForm clientSecret={paymentIntent.clientSecret} onSuccess={handlePaymentSuccess} />
+      )}
     </Box>
   );
 };

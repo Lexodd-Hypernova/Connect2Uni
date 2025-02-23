@@ -17,9 +17,11 @@ import {
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { countryCodes } from "./countryCodes";
 import axios from "axios";
+import { useNavigate } from 'react-router-dom';
+import toast, { Toaster } from "react-hot-toast";
 
 
-const base_url = "http://localhost:3000";
+const base_url = import.meta.env.VITE_API_URL;
 
 const Registration = () => {
   const [step, setStep] = useState(1);
@@ -34,18 +36,21 @@ const Registration = () => {
     password: "",
     countryCode: "+1",
     telephoneNumber: "",
-    document: null,
+    address: {
+      country: "United States",
+      zip_postalCode: "",
+      state_province_region: "",
+      city: "",
+      addressLine: "",
+    },
     documentType: "",
     mostRecentEducation: "",
-    otherEducationName: "",
     yearOfGraduation: "",
     collegeUniversity: "",
     programType: "",
-    otherProgramName: "",
     discipline: "",
-    otherDisciplineName: "",
-    countryApplyingFrom: "",
-    countryName: "",
+    // countryApplyingFrom: "",
+    // countryName: "",
     preferredUniversity: "",
     NameOfUniversity: "",
     preferredCourse: "",
@@ -54,22 +59,80 @@ const Registration = () => {
     englishLanguageRequirement: "",
     testName: "",
     score: "",
-    documentUpload: null,
     referralSource: "",
+    // preferredCommunicationMethod: "", Remove this
     termsAndConditionsAccepted: false,
     gdprAccepted: false,
+    documentUpload: null,
+    document: null,
   });
+
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate()
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+  
+    // Check if the field is nested (e.g., address.country)
+    if (name.includes(".")) {
+      const [parent, child] = name.split("."); // Split into parent and child keys
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        [parent]: {
+          ...prevFormData[parent],
+          [child]: value,
+        },
+      }));
+    } else {
+      // Handle non-nested fields
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        [name]: value,
+      }));
+    }
+  
+    // Automatically set the country name when country code is selected
+    if (name === "countryCode") {
+      let selectedCountryName = "";
+  
+      // Handle the case for +1 (United States and Canada share the same code)
+      if (value === "+1") {
+        selectedCountryName = "United States"; // Explicitly set to United States
+      } else {
+        const selectedCountry = countryCodes.find((country) => country.code === value);
+        selectedCountryName = selectedCountry ? selectedCountry.name : "";
+      }
+  
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        address: {
+          ...prevFormData.address,
+          country: selectedCountryName, // Update the country name in the address section
+        },
+      }));
+    }
+  
+    // Clear test-related fields when English test is not required
+    if (name === "englishLanguageRequirement" && value === "No") {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        testName: "",
+        score: "",
+        documentUpload: null,
+      }));
+    }
+  
+    // Clear errors for the current field
     if (errors[name]) {
       setErrors({ ...errors, [name]: "" });
     }
   };
+
+  const loginPageRedirect = () => {
+    navigate('/login')
+  }
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -131,9 +194,28 @@ const Registration = () => {
         newErrors.document = "Passport file is required";
       }
     }
-
+    
     // Step 3: Educational Background Validation
     if (step === 3) {
+      if (!formData.address.country) {
+        newErrors.country = "Country is required";
+      }
+      if (!formData.address.zip_postalCode.trim()) {
+        newErrors.zip_postalCode = "ZIP/Postal Code is required";
+      }
+      if (!formData.address.state_province_region.trim()) {
+        newErrors.state_province_region = "State/Province/Region is required";
+      }
+      if (!formData.address.city.trim()) {
+        newErrors.city = "City is required";
+      }
+      if (!formData.address.addressLine.trim()) {
+        newErrors.addressLine = "Address Line is required";
+      }
+    }
+
+    // Step 4: Educational Background Validation
+    if (step === 4) {
       if (!formData.mostRecentEducation) {
         newErrors.mostRecentEducation = "Recent Education is required";
       }
@@ -161,13 +243,13 @@ const Registration = () => {
     }
 
     // Step 4: Program Preferences Validation
-    if (step === 4) {
-      if (!formData.countryApplyingFrom) {
-        newErrors.countryApplyingFrom = "Applying Country is required";
-      }
-      if (formData.countryApplyingFrom === "Other" && !formData.countryName.trim()) {
-        newErrors.countryName = "Please specify the country";
-      }
+    if (step === 5) {
+      // if (!formData.countryApplyingFrom) {
+      //   newErrors.countryApplyingFrom = "Applying Country is required";
+      // }
+      // if (formData.countryApplyingFrom === "Other" && !formData.countryName.trim()) {
+      //   newErrors.countryName = "Please specify the country";
+      // }
       if (!formData.preferredUniversity) {
         newErrors.preferredUniversity = "Preferred University is required";
       }
@@ -197,10 +279,26 @@ const Registration = () => {
           newErrors.documentUpload = "Document Upload is required";
         }
       }
+      if (!formData.englishLanguageRequirement) {
+        newErrors.englishLanguageRequirement = "English Requirement is required";
+      }
+  
+      // Only validate testName, score, and documentUpload if English test is given
+      if (formData.englishLanguageRequirement === "Yes") {
+        if (!formData.testName) {
+          newErrors.testName = "Test Taken is required";
+        }
+        if (!formData.score) {
+          newErrors.score = "Test Score is required";
+        }
+        if (!formData.documentUpload) {
+          newErrors.documentUpload = "Document Upload is required";
+        }
+      }
     }
 
     // Step 5: Terms and Conditions Validation
-    if (step === 5) {
+    if (step === 6) {
       if (!formData.referralSource) {
         newErrors.referralSource = "Please specify how you heard about us";
       }
@@ -230,9 +328,12 @@ const Registration = () => {
 
   const handleSubmit = async () => {
     if (!formData.termsAndConditionsAccepted || !formData.gdprAccepted) {
-      alert("Please agree to the Terms and Conditions and GDPR Regulations.");
+      toast.error("Please agree to the Terms and Conditions and GDPR Regulations.");
       return;
     }
+
+    console.log(formData);
+    
 
     const formDataToSend = new FormData();
     for (const key in formData) {
@@ -253,17 +354,17 @@ const Registration = () => {
         },
       });
 
-      console.log(response)
-
       if (response.status === 200) {
-        alert("Registration successful.");
+        toast.success("Registration successful. Please check your email for instructions. ");
+        loginPageRedirect()
       }
+
     } catch (error) {
-      console.error("Error registering student:", error);
+        toast.error("Error registering student:", error);
       if (error.response) {
-        alert(`Error: ${error.response.data.message || "Registration failed. Please try again."}`);
+        toast.error(`Error: ${error.response.data.message || "Registration failed. Please try again."}`);
       } else {
-        alert("An unexpected error occurred. Please try again.");
+        toast.error("An unexpected error occurred. Please try again.");
       }
     } finally {
       setLoading(false);
@@ -273,7 +374,7 @@ const Registration = () => {
  
 
   const getProgress = () => {
-    return step * 20;
+    return step * 16.67;
   };
 
   const getMinDate = () => {
@@ -303,8 +404,10 @@ const Registration = () => {
               : step === 2
               ? "Contact Information"
               : step === 3
-              ? "Educational Background"
+              ? "Address"
               : step === 4
+              ? "Educational Background"
+              : step === 5
               ? "Program Preferences"
               : "Terms and Conditions"}
           </Typography>
@@ -500,8 +603,91 @@ const Registration = () => {
             </>
           )}
 
-          {/* Step 3: Educational Background */}
-          {step === 3 && (
+        {step === 3 && (
+          <>
+            <Stack spacing={2}>
+              <TextField
+                select
+                label="Country *"
+                name="address.country"
+                variant="outlined"
+                fullWidth
+                size="small"
+                value={formData.address.country}
+                onChange={handleChange}
+                error={!!errors.country}
+                helperText={errors.country}
+              >
+                {countryCodes.map((country) => (
+                  <MenuItem key={`${country.code}-${country.name}`} value={country.name}>
+                    {country.name}
+                  </MenuItem>
+                ))}
+              </TextField>
+              <TextField
+                label="ZIP/Postal Code *"
+                name="address.zip_postalCode"
+                variant="outlined"
+                fullWidth
+                size="small"
+                value={formData.address.zip_postalCode}
+                onChange={handleChange}
+                error={!!errors.zip_postalCode}
+                helperText={errors.zip_postalCode}
+              />
+              <TextField
+                label="State/Province/Region *"
+                name="address.state_province_region"
+                variant="outlined"
+                fullWidth
+                size="small"
+                value={formData.address.state_province_region}
+                onChange={handleChange}
+                error={!!errors.state_province_region}
+                helperText={errors.state_province_region}
+              />
+              <TextField
+                label="City *"
+                name="address.city"
+                variant="outlined"
+                fullWidth
+                size="small"
+                value={formData.address.city}
+                onChange={handleChange}
+                error={!!errors.city}
+                helperText={errors.city}
+              />
+              <TextField
+                label="Address Line *"
+                name="address.addressLine"
+                variant="outlined"
+                fullWidth
+                size="small"
+                value={formData.address.addressLine}
+                onChange={handleChange}
+                error={!!errors.addressLine}
+                helperText={errors.addressLine}
+                placeholder="Enter address"
+              />
+            </Stack>
+            <Box mt={4} display="flex" justifyContent="space-between">
+              <Button variant="outlined" onClick={handleBack}>
+                Back
+              </Button>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleNext}
+                sx={{ backgroundColor: "#2196F3", color: "#ffffff" }}
+              >
+                Save & Next
+              </Button>
+            </Box>
+          </>
+        )}
+
+
+          {step === 4 && (
             <>
               <Stack spacing={2}>
                 <TextField
@@ -644,10 +830,10 @@ const Registration = () => {
           )}
 
           {/* Step 4: Program Preferences */}
-          {step === 4 && (
+          {step === 5 && (
             <>
               <Stack spacing={2}>
-                <TextField
+                {/* <TextField
                   select
                   label="Country you are applying from *"
                   name="countryApplyingFrom"
@@ -661,6 +847,14 @@ const Registration = () => {
                 >
                   <MenuItem value="UK">UK</MenuItem>
                   <MenuItem value="India">India</MenuItem>
+                  <MenuItem value="Nepal">Nepal</MenuItem>
+                  <MenuItem value="Pakistan">Pakistan</MenuItem>
+                  <MenuItem value="Bangladesh">Bangladesh</MenuItem>
+                  <MenuItem value="Philippines">Philippines</MenuItem>
+                  <MenuItem value="Vietnam">Vietnam</MenuItem>
+                  <MenuItem value="Sudan">Sudan</MenuItem>
+                  <MenuItem value="Egypt">Egypt</MenuItem>
+                  <MenuItem value="Bhutan">Bhutan</MenuItem>
                   <MenuItem value="Other">Other</MenuItem>
                 </TextField>
                 {formData.countryApplyingFrom === "Other" && (
@@ -675,7 +869,7 @@ const Registration = () => {
                     error={!!errors.countryName}
                     helperText={errors.countryName}
                   />
-                )}
+                )} */}
                 <TextField
                   select
                   label="Any preferred university? *"
@@ -751,7 +945,7 @@ const Registration = () => {
                 </TextField>
                 <TextField
                   select
-                  label="English Language Requirement *"
+                  label="Any English Language Test Given? *"
                   name="englishLanguageRequirement"
                   variant="outlined"
                   fullWidth
@@ -765,54 +959,54 @@ const Registration = () => {
                   <MenuItem value="No">No</MenuItem>
                 </TextField>
                 {formData.englishLanguageRequirement === "Yes" && (
-                  <>
-                    <TextField
-                      select
-                      label="Name of the test taken *"
-                      name="testName"
-                      variant="outlined"
-                      fullWidth
-                      size="small"
-                      value={formData.testName}
-                      onChange={handleChange}
-                      error={!!errors.testName}
-                      helperText={errors.testName}
-                    >
-                      <MenuItem value="TOEFL">TOEFL</MenuItem>
-                      <MenuItem value="IELTS">IELTS</MenuItem>
-                      <MenuItem value="Other">Other</MenuItem>
-                    </TextField>
-                    <TextField
-                      label="Score *"
-                      name="score"
-                      variant="outlined"
-                      fullWidth
-                      size="small"
-                      value={formData.score}
-                      onChange={handleChange}
-                      error={!!errors.score}
-                      helperText={errors.score}
-                    />
-                    <Typography variant="body1" sx={{ mt: 2 }}>
-                      Upload Document *
-                    </Typography>
-                    <Typography variant="body2" color="textSecondary" sx={{ mb: 1 }}>
-                      Upload your English language test score document.
-                    </Typography>
-                    <input
-                      type="file"
-                      accept=".jpg, .png, .pdf, .doc, .docx"
-                      name="documentUpload"
-                      onChange={handleFileChange}
-                      style={{ marginTop: "8px" }}
-                    />
-                    {errors.documentUpload && (
-                      <Typography variant="body2" color="error">
-                        {errors.documentUpload}
-                      </Typography>
-                    )}
-                  </>
-                )}
+  <>
+    <TextField
+      select
+      label="Name of the test taken *"
+      name="testName"
+      variant="outlined"
+      fullWidth
+      size="small"
+      value={formData.testName}
+      onChange={handleChange}
+      error={!!errors.testName}
+      helperText={errors.testName}
+    >
+      <MenuItem value="TOEFL">TOEFL</MenuItem>
+      <MenuItem value="IELTS">IELTS</MenuItem>
+      <MenuItem value="Other">Other</MenuItem>
+    </TextField>
+    <TextField
+      label="Score *"
+      name="score"
+      variant="outlined"
+      fullWidth
+      size="small"
+      value={formData.score}
+      onChange={handleChange}
+      error={!!errors.score}
+      helperText={errors.score}
+    />
+    <Typography variant="body1" sx={{ mt: 2 }}>
+      Upload Document *
+    </Typography>
+    <Typography variant="body2" color="textSecondary" sx={{ mb: 1 }}>
+      Upload your English language test score document.
+    </Typography>
+    <input
+      type="file"
+      accept=".jpg, .png, .pdf, .doc, .docx"
+      name="documentUpload"
+      onChange={handleFileChange}
+      style={{ marginTop: "8px" }}
+    />
+    {errors.documentUpload && (
+      <Typography variant="body2" color="error">
+        {errors.documentUpload}
+      </Typography>
+    )}
+  </>
+)}
               </Stack>
               <Box mt={4} display="flex" justifyContent="space-between">
                 <Button variant="outlined" onClick={handleBack}>
@@ -831,7 +1025,7 @@ const Registration = () => {
           )}
 
           {/* Step 5: Terms and Conditions */}
-          {step === 5 && (
+          {step === 6 && (
             <>
               <Stack spacing={2}>
                 <TextField
@@ -902,6 +1096,7 @@ const Registration = () => {
             </>
           )}
         </Box>
+        <Toaster />
     </Container>
   );
 };

@@ -2,10 +2,10 @@ import React, { useState } from "react";
 import axios from "axios";
 import { TextField, Button, Grid, MenuItem } from "@mui/material";
 import { countryCodes } from "../../../Auth/countryCodes";
-// import Cookies from 'js-cookie';
+import Cookies from 'js-cookie';
 import toast, { Toaster } from 'react-hot-toast';
 
-const base_url = "http://localhost:3000";
+const base_url = import.meta.env.VITE_API_URL;
 
 const AddUniversityForm = ({ onClose }) => {
   const [formData, setFormData] = useState({
@@ -68,11 +68,11 @@ const AddUniversityForm = ({ onClose }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // const token = Cookies.get('refreshtoken');
-    // if (!token) {
-    //   alert("You are not authenticated. Please log in.");
-    //   return;
-    // }
+    const token = Cookies.get('refreshtoken');
+    if (!token) {
+      alert("You are not authenticated. Please log in.");
+      return;
+    }
 
     const formPayload = new FormData();
     Object.entries(formData).forEach(([key, value]) => {
@@ -94,8 +94,8 @@ const AddUniversityForm = ({ onClose }) => {
       const response = await axios.post(`${base_url}/agency/create/university`, formPayload, {
         headers: {
           'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${token}`
         },
-        withCredentials: true, // ✅ Moved inside the same config object
       });
       
 

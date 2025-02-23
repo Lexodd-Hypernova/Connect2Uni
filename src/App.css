@@ -40,3 +40,8 @@
 .read-the-docs {
   color: #888;
 }
+/* Add this to your global styles or within the component */
+#card-element .StripeElement {
+  display: block;
+  margin-bottom: 16px; /* Add spacing between fields */
+}

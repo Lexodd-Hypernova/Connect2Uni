@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Box, Typography, Button, Grid, Card, CardContent, CardMedia } from "@mui/material";
+import Cookies from 'js-cookie';
 import { useSelector } from "react-redux";
 
 const StudentDashboard = () => {
@@ -10,10 +11,15 @@ const StudentDashboard = () => {
   const [error, setError] = useState(null);
   
   const navigate = useNavigate();
-  const base_url = "http://localhost:3000";
+  const base_url = import.meta.env.VITE_API_URL;
   const { platform_access, payment_prompt } = useSelector((state) => state.auth);
 
   useEffect(() => {
+     const token = Cookies.get('refreshtoken');
+        if (!token) {
+          alert("You are not authenticated. Please log in.");
+          return;
+        }
     if (platform_access?.payment_required) {
       navigate("/payment/platform-fee"); // ✅ Redirect to payment page
     }
@@ -21,9 +27,12 @@ const StudentDashboard = () => {
       try {
         setLoading(true);
         const response = await axios.get(`${base_url}/student/get/universities`, {
-          withCredentials: true, 
+          headers : {
+            'Authorization': `Bearer ${token}`
+          } 
         });
-
+         console.log(response);
+         
         setUniversities(response.data.universities); // ✅ Set data if successful
         setError(null); // ✅ Reset error if request succeeds
       } catch (err) {
