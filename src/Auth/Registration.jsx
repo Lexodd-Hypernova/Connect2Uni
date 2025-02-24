@@ -331,21 +331,45 @@ const Registration = () => {
       toast.error("Please agree to the Terms and Conditions and GDPR Regulations.");
       return;
     }
-
-    console.log(formData);
-    
-
+  
+    // Create a copy of formData to avoid mutating the original state
+    const dataToSend = { ...formData };
+  
+    // Remove fields based on conditions
+    if (dataToSend.preferredCourse === "No") {
+      delete dataToSend.NameOfCourse;
+    }
+    if (dataToSend.preferredUniversity === "No") {
+      delete dataToSend.NameOfUniversity;
+    }
+    if (dataToSend.englishLanguageRequirement === "No") {
+      delete dataToSend.testName;
+      delete dataToSend.score;
+      delete dataToSend.documentUpload;
+    }
+  
+    console.log(dataToSend);
+  
     const formDataToSend = new FormData();
-    for (const key in formData) {
-      if (formData[key] !== null && formData[key] !== undefined) {
+  
+    // Append non-nested fields
+    for (const key in dataToSend) {
+      if (key !== "address" && dataToSend[key] !== null && dataToSend[key] !== undefined) {
         if (key === "document" || key === "documentUpload") {
-          formDataToSend.append(key, formData[key]);
+          formDataToSend.append(key, dataToSend[key]);
         } else {
-          formDataToSend.append(key, formData[key]);
+          formDataToSend.append(key, dataToSend[key]);
         }
       }
     }
-
+  
+    // Append nested address fields
+    for (const key in dataToSend.address) {
+      if (dataToSend.address[key] !== null && dataToSend.address[key] !== undefined) {
+        formDataToSend.append(`address[${key}]`, dataToSend.address[key]);
+      }
+    }
+  
     try {
       setLoading(true);
       const response = await axios.post(`${base_url}/student/register`, formDataToSend, {
@@ -353,14 +377,13 @@ const Registration = () => {
           "Content-Type": "multipart/form-data",
         },
       });
-
+  
       if (response.status === 200) {
-        toast.success("Registration successful. Please check your email for instructions. ");
-        loginPageRedirect()
+        toast.success("Registration successful. Please check your email for instructions.");
+        loginPageRedirect();
       }
-
     } catch (error) {
-        toast.error("Error registering student:", error);
+      toast.error("Error registering student:", error);
       if (error.response) {
         toast.error(`Error: ${error.response.data.message || "Registration failed. Please try again."}`);
       } else {
