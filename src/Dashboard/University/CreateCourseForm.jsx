@@ -4,9 +4,9 @@ import { Box, TextField, Button, Typography, Grid } from '@mui/material';
 const CreateCourseForm = ({ onCancel, onSubmit }) => {
   const [courseDetails, setCourseDetails] = useState({
     name: '',
-    duration: '',
-    fee: '',
-    rating: '',
+    description: '',
+    fees: '',
+    // rating: '',
   });
 
   const handleChange = (e) => {
@@ -18,8 +18,12 @@ const CreateCourseForm = ({ onCancel, onSubmit }) => {
   };
 
   const handleSubmit = () => {
-    // Validate and submit the form data
-    if (courseDetails.name && courseDetails.duration && courseDetails.fee && courseDetails.rating) {
+    console.log(onsubmit);
+
+    console.log(courseDetails.name, courseDetails.description, courseDetails.fees);
+    
+    
+    if (courseDetails.name && courseDetails.description && courseDetails.fees ) {
       onSubmit(courseDetails);
     } else {
       alert('Please fill all the fields.');
@@ -44,22 +48,22 @@ const CreateCourseForm = ({ onCancel, onSubmit }) => {
         <Grid item xs={12}>
           <TextField
             fullWidth
-            label="Duration"
-            name="duration"
-            value={courseDetails.duration}
+            label="Description"
+            name="description"
+            value={courseDetails.description}
             onChange={handleChange}
           />
         </Grid>
         <Grid item xs={12}>
           <TextField
             fullWidth
-            label="Fee"
-            name="fee"
-            value={courseDetails.fee}
+            label="Fees"
+            name="fees"
+            value={courseDetails.fees}
             onChange={handleChange}
           />
         </Grid>
-        <Grid item xs={12}>
+        {/* <Grid item xs={12}>
           <TextField
             fullWidth
             label="Rating"
@@ -69,7 +73,7 @@ const CreateCourseForm = ({ onCancel, onSubmit }) => {
             value={courseDetails.rating}
             onChange={handleChange}
           />
-        </Grid>
+        </Grid> */}
       </Grid>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: 3 }}>
         <Button variant="contained" color="error" onClick={onCancel}>

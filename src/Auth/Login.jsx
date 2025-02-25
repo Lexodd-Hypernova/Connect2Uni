@@ -19,14 +19,17 @@ import {
   InputAdornment,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import ResendVerificationCode from "./ResendVerificationCode"; // Import the new component
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false); // State for password visibility
+  const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+  const [openResendModal, setOpenResendModal] = useState(false); // State for modal
   const dispatch = useDispatch();
-  const { loading, error } = useSelector((state) => state.auth);
+  // const { loading } = useSelector((state) => state.auth);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const base_url = import.meta.env.VITE_API_URL;
@@ -38,15 +41,13 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     dispatch(loginStart());
+    setLoading(true);
 
     try {
       const response = await axios.post(`${base_url}/student/login`, {
         email,
         password,
       });
-
-      console.log(response);
-      
 
       if (response.status === 200) {
         Cookies.set("refreshtoken", response.data.token, { expires: 1 });
@@ -76,7 +77,7 @@ const Login = () => {
         }
 
         toast.success("Login Successful");
-
+         setLoading(false)
         if (rememberMe) {
           localStorage.setItem("rememberedEmail", email);
         } else {
@@ -86,10 +87,16 @@ const Login = () => {
         dispatch(loginFailure("Invalid email or password"));
       }
     } catch (err) {
-      toast.error(err.response.data.message);
-      dispatch(
-        loginFailure(err.response?.data?.message || "An error occurred. Please try again.")
-      );
+      console.log(err);
+       setLoading(false)
+      if (err.response?.data?.message === "Email not verified. Please verify your email before logging in.") {
+        
+        setOpenResendModal(true); // Open modal if email is not verified
+      } else {
+        setLoading(false)
+        toast.error(err.response?.data?.message || "An error occurred. Please try again.");
+        dispatch(loginFailure(err.response?.data?.message || "An error occurred."));
+      }
     }
   };
 
@@ -136,7 +143,7 @@ const Login = () => {
             fullWidth
             name="password"
             label="Password"
-            type={showPassword ? "text" : "password"} // Dynamic type
+            type={showPassword ? "text" : "password"}
             id="password"
             autoComplete="current-password"
             value={password}
@@ -144,10 +151,7 @@ const Login = () => {
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
-                  <IconButton
-                    onClick={() => setShowPassword((prev) => !prev)}
-                    edge="end"
-                  >
+                  <IconButton onClick={() => setShowPassword((prev) => !prev)} edge="end">
                     {showPassword ? <VisibilityOff /> : <Visibility />}
                   </IconButton>
                 </InputAdornment>
@@ -164,13 +168,7 @@ const Login = () => {
             }
             label="Remember me"
           />
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            sx={{ mt: 3, mb: 2 }}
-            disabled={loading}
-          >
+          <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }} disabled={loading}>
             {loading ? "Logging in..." : "Login"}
           </Button>
           <Grid container>
@@ -188,6 +186,9 @@ const Login = () => {
         </Box>
       </Box>
       <Toaster position="top-center" reverseOrder={false} />
+
+      {/* Resend Verification Modal */}
+      <ResendVerificationCode open={openResendModal} handleClose={() => setOpenResendModal(false)} email={email} />
     </Container>
   );
 };

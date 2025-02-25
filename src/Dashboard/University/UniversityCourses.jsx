@@ -1,128 +1,115 @@
-import React, { useState } from 'react';
-import { Button, Card, CardContent, Typography, Box, Grid } from '@mui/material';
-import StarIcon from '@mui/icons-material/Star';
-import StarBorderIcon from '@mui/icons-material/StarBorder';
-import StarHalfIcon from '@mui/icons-material/StarHalf';
-import CreateCourseForm from './CreateCourseForm'; // Import the new form component
+import React, { useState, useEffect } from 'react';
+import { Button, Card, CardContent, Typography, Box, Grid, Modal } from '@mui/material';
+import CreateCourseForm from './CreateCourseForm';
+import axios from 'axios';
+import Cookies from 'js-cookie';
+import toast from 'react-hot-toast';
+
+const base_url = import.meta.env.VITE_API_URL;
 
 const UniversityCourses = () => {
   const [showForm, setShowForm] = useState(false);
-  const [activeCourses, setActiveCourses] = useState([
-    { name: 'Computer Science', duration: '4 Years', fee: '$10,000', rating: 4.5 },
-    { name: 'Business Administration', duration: '3 Years', fee: '$8,000', rating: 4.2 },
-    { name: 'Mechanical Engineering', duration: '4 Years', fee: '$12,000', rating: 4.7 },
-    { name: 'Psychology', duration: '3 Years', fee: '$9,000', rating: 4.0 },
-    { name: 'Graphic Design', duration: '2 Years', fee: '$7,000', rating: 4.3 },
-  ]);
+  const [courses, setCourses] = useState([]); // State to store fetched courses
+  const [loading, setLoading] = useState(true); // Loading state
 
-  const inactiveCourses = [
-    { name: 'Civil Engineering', duration: '4 Years', fee: '$11,000', rating: 4.1 },
-    { name: 'Marketing', duration: '3 Years', fee: '$8,500', rating: 3.9 },
-    { name: 'Biotechnology', duration: '4 Years', fee: '$13,000', rating: 4.4 },
-  ];
+  // Fetch courses from the API
+  useEffect(() => {
+    const fetchCourses = async () => {
+      const token = Cookies.get('refreshtoken');
+      if (!token) {
+        toast.error('You are not authenticated. Please log in.');
+        return;
+      }
 
-  // Function to render star rating
-  const renderStars = (rating) => {
-    const stars = [];
-    const fullStars = Math.floor(rating); // Number of full stars
-    const hasHalfStar = rating % 1 !== 0; // Check if there's a half star
+      try {
+        const response = await axios.get(`${base_url}/university/get/all-courses`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
-    // Render full stars
-    for (let i = 0; i < fullStars; i++) {
-      stars.push(<StarIcon key={`full-${i}`} sx={{ color: 'gold' }} />);
+        // Set the fetched courses to state
+        setCourses(response.data.courses);
+      } catch (error) {
+        console.error('Error fetching courses:', error);
+        toast.error('Failed to fetch courses.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCourses();
+  }, []);
+
+  // Handle form submission for creating a new course
+  const handleSubmit = async (newCourse) => {
+    const token = Cookies.get('refreshtoken');
+    if (!token) {
+      toast.error('You are not authenticated. Please log in.');
+      return;
     }
 
-    // Render half star if needed
-    if (hasHalfStar) {
-      stars.push(<StarHalfIcon key="half" sx={{ color: 'gold' }} />);
-    }
+    try {
+      const response = await axios.post(`${base_url}/university/api/course/create`, newCourse, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-    // Render empty stars to fill up to 5
-    const remainingStars = 5 - stars.length;
-    for (let i = 0; i < remainingStars; i++) {
-      stars.push(<StarBorderIcon key={`empty-${i}`} sx={{ color: 'gold' }} />);
+      // Add the new course to the existing list of courses
+      setCourses((prev) => [...prev, response.data]);
+      toast.success('Course created successfully!');
+      setShowForm(false);
+    } catch (error) {
+      console.error('Error creating course:', error);
+      toast.error('Failed to create course.');
     }
-
-    return stars;
   };
 
-  // Handle form submission
-  const handleSubmit = (newCourse) => {
-    setActiveCourses((prev) => [...prev, newCourse]);
-    setShowForm(false); // Hide the form after submission
-  };
+  if (loading) {
+    return <Typography>Loading courses...</Typography>;
+  }
 
   return (
     <Box sx={{ padding: 3 }}>
       {/* Create Course Button */}
       <Box sx={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 3 }}>
-        <Button variant="contained" color="primary" onClick={() => setShowForm(!showForm)}>
+        <Button variant="contained" color="primary" onClick={() => setShowForm(true)}>
           Create Course
         </Button>
       </Box>
 
-      {/* Show Create Course Form */}
-      {showForm && (
-        <CreateCourseForm
-          onCancel={() => setShowForm(false)}
-          onSubmit={handleSubmit}
-        />
-      )}
+      {/* Modal for Create Course Form */}
+      <Modal open={showForm} onClose={() => setShowForm(false)}>
+        <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: 400, bgcolor: 'background.paper', boxShadow: 24, p: 4 }}>
+          <CreateCourseForm
+            onCancel={() => setShowForm(false)}
+            onSubmit={handleSubmit}
+          />
+        </Box>
+      </Modal>
 
-      {/* Active Courses Section */}
+      {/* Display Courses in Card Form */}
       <Typography variant="h4" sx={{ marginBottom: 2 }}>
-        Active Courses
+        Courses
       </Typography>
       <Grid container spacing={3}>
-        {activeCourses.map((course, index) => (
-          <Grid item xs={12} sm={6} md={4} key={index}>
+        {courses.map((course) => (
+          <Grid item xs={12} sm={6} md={4} key={course._id}>
             <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
               <CardContent>
                 <Typography variant="h5" sx={{ fontWeight: 'bold', marginBottom: 1 }}>
                   {course.name}
                 </Typography>
                 <Typography variant="body1" sx={{ marginBottom: 1 }}>
-                  Duration: {course.duration}
+                  Description: {course.description}
                 </Typography>
                 <Typography variant="body1" sx={{ marginBottom: 1 }}>
-                  Fee: {course.fee}
-                </Typography>
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                  <Typography variant="body1" sx={{ marginRight: 1 }}>
-                    Rating:
-                  </Typography>
-                  {renderStars(course.rating)}
-                </Box>
-              </CardContent>
-            </Card>
-          </Grid>
-        ))}
-      </Grid>
-
-      {/* Inactive Courses Section */}
-      <Typography variant="h4" sx={{ marginTop: 4, marginBottom: 2 }}>
-        Inactive Courses
-      </Typography>
-      <Grid container spacing={3}>
-        {inactiveCourses.map((course, index) => (
-          <Grid item xs={12} sm={6} md={4} key={index}>
-            <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column', opacity: 0.6 }}>
-              <CardContent>
-                <Typography variant="h5" sx={{ fontWeight: 'bold', marginBottom: 1 }}>
-                  {course.name}
+                  Fees: ${course.fees}
                 </Typography>
                 <Typography variant="body1" sx={{ marginBottom: 1 }}>
-                  Duration: {course.duration}
+                  Ratings: {course.ratings.length > 0 ? course.ratings.join(', ') : 'No ratings yet'}
                 </Typography>
-                <Typography variant="body1" sx={{ marginBottom: 1 }}>
-                  Fee: {course.fee}
-                </Typography>
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                  <Typography variant="body1" sx={{ marginRight: 1 }}>
-                    Rating:
-                  </Typography>
-                  {renderStars(course.rating)}
-                </Box>
               </CardContent>
             </Card>
           </Grid>
