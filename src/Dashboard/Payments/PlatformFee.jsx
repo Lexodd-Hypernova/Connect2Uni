@@ -4,22 +4,17 @@ import { useNavigate } from 'react-router-dom';
 import { Box, Typography, CircularProgress, Button } from '@mui/material';
 import axios from 'axios';
 import Cookies from 'js-cookie';
-import PaymentForm from './PaymentForm'; // Adjust the import path as needed
+import PaymentForm from './PaymentForm'; 
 
 const PlatformFee = () => {
   const { payment_prompt } = useSelector((state) => state.auth);
   const navigate = useNavigate();
-  const [paymentIntent, setPaymentIntent] = useState(null);
+  const [clientSecret, setClientSecret] = useState('');
   const [loading, setLoading] = useState(false);
-  const [showPaymentForm, setShowPaymentForm] = useState(false); // State to control the visibility of the payment form
+  const [showPaymentForm, setShowPaymentForm] = useState(false);
 
   const base_url = import.meta.env.VITE_API_URL;
-
   const token = Cookies.get('refreshtoken');
-      if (!token) {
-        alert("You are not authenticated. Please log in.");
-        return;
-      }
 
   useEffect(() => {
     if (!payment_prompt) {
@@ -32,13 +27,11 @@ const PlatformFee = () => {
     try {
       const response = await axios.post(
         `${base_url}/student/create-payment-intent`,
-        {}, 
-        { headers:{Authorization: `Bearer ${token}`} }
+        { amount: payment_prompt.amount, currency: payment_prompt.currency },
+        { headers: { Authorization: `Bearer ${token}` } }
       );
-      setPaymentIntent(response.data);
-      console.log(response);
-      
-      setShowPaymentForm(true); // Show the payment form after the payment intent is created
+      setClientSecret(response.data.clientSecret);
+      setShowPaymentForm(true);
     } catch (error) {
       console.error('Error creating payment intent:', error);
     } finally {
@@ -46,26 +39,17 @@ const PlatformFee = () => {
     }
   };
 
-  const handlePaymentSuccess = async(paymentIntent) => {
+  const handlePaymentSuccess = async (paymentIntent) => {
     console.log('Payment succeeded:', paymentIntent);
-    // Redirect the user or show a success message`
-
     try {
-      const response = await axios.post(
-        `${base_url}/student/stripe-webhook`,{paymentIntent},
-        { headers: {
-          'Content-Type': 'application/json',
-          'Stripe-Signature': 'whsec_FguvRWfK2NIYfcuzhcrftUHhnZ0bNX4a',
-          Authorization: `Bearer ${token}`
-        } }
+      await axios.post(
+        `${base_url}/student/stripe-webhook`,
+        { paymentIntentId: paymentIntent.id },
+        { headers: { Authorization: `Bearer ${token}` } }
       );
-      
-      console.log(response);
-      
+      navigate("/student/dashboard"); // Redirect on success
     } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
+      console.error('Error confirming payment:', error);
     }
   };
 
@@ -89,7 +73,6 @@ const PlatformFee = () => {
         Amount: {payment_prompt.amount} {payment_prompt.currency}
       </Typography>
 
-      {/* Pay Now Button */}
       {!showPaymentForm && (
         <Button
           variant="contained"
@@ -102,9 +85,8 @@ const PlatformFee = () => {
         </Button>
       )}
 
-      {/* Payment Form (Displayed after clicking Pay Now) */}
-      {showPaymentForm && paymentIntent && (
-        <PaymentForm clientSecret={paymentIntent.clientSecret} onSuccess={handlePaymentSuccess} />
+      {showPaymentForm && clientSecret && (
+        <PaymentForm clientSecret={clientSecret} onSuccess={handlePaymentSuccess} />
       )}
     </Box>
   );

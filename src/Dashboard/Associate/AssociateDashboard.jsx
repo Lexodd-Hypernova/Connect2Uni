@@ -12,25 +12,19 @@ import {
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Box } from '@mui/system';
-import Charts from './Charts/Charts';
-import AgentInfo from '../Agents/AgentInfo'
-import StudentList from '../Student/StudentList';
-import StudentApplicationManagement from '../Student/StudentApplicationManagement';
-import UniversityInfo from '../University/UniversityInfo';
-import UniversityApplicationManagement from '../University/UniversityApplicationManagement';
-import AssociateList from '../Associate/AssociateList';
-
+import ApplicationStats from './ApplicationStats';
+import AssociateInfo from './AssociateInfo';
 
 // Example Components to Render
-const DashboardContent = () => <Charts />;
-const Agentinfo = () => <AgentInfo />
-const StudentLists = () => <StudentList /> ;
-const StudentApplication_Management = () => <StudentApplicationManagement /> ;
-const Universityinfo = () => <UniversityInfo />;
-const UniversityApplication_Management = () => <UniversityApplicationManagement />;
-const AssociateOption1Content = () => <AssociateList />;
+const DashboardContent = () => <ApplicationStats />;
+const Associateinfo = () =>  <AssociateInfo />;
+const StudentLists = () =>  <h1>3</h1>;
+const StudentApplication_Management = () =>  <h1>4</h1>;
+const Universityinfo = () =>  <h1>5</h1>;
+const UniversityApplication_Management = () =>  <h1>6</h1>;
+const AssociateOption1Content = () => <h1>7</h1>;
 
-const AgencyDashboard = () => {
+const AssociateDashboard = () => {
   const [expanded, setExpanded] = useState('dashboard'); // 'dashboard' is open by default
   const [selectedComponent, setSelectedComponent] = useState(<DashboardContent />); // Default Content
 
@@ -75,12 +69,12 @@ const AgencyDashboard = () => {
             onChange={handleAccordionChange('agents')}
           >
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-              <ListItemText primary="Agents" />
+              <ListItemText primary="Associates" />
             </AccordionSummary>
             <AccordionDetails>
               <List>
-                <ListItem button onClick={handleItemClick(<Agentinfo />)}>
-                  <ListItemText primary="Agent Info" />
+                <ListItem button onClick={handleItemClick(<Associateinfo />)}>
+                  <ListItemText primary="Associate Info" />
                 </ListItem>
                 
                 <ListItem button onClick={handleItemClick(<div>Application Management</div>)}>
@@ -163,7 +157,6 @@ const AgencyDashboard = () => {
           flexGrow: 1,
           padding: 3,
           backgroundColor: '#f9f9f9',
-          minHeight: '100vh',
         }}
       >
         {selectedComponent}
@@ -172,4 +165,4 @@ const AgencyDashboard = () => {
   );
 };
 
-export default AgencyDashboard;
+export default AssociateDashboard;

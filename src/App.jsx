@@ -1,17 +1,22 @@
 import React, { useEffect } from "react";
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import Login from "./Auth/Login";
-import Registration from "./Auth/Registration";
 import StudentDashboard from "./Dashboard/Student/StudentDashboard/StudentDashboard";
 import DashboardWrapper from "./Wrapper/Wrapper";
-import { verifyToken } from "../store/authSlice"; 
+import { verifyToken } from "../store/authSlice";
 import PlatformFee from "./Dashboard/Payments/PlatformFee";
 import { Box, CircularProgress, Typography } from "@mui/material";
 import UniversityDashboard from "./Dashboard/University/UniversityDashboard";
+import UniversityDetail from "./Dashboard/Student/StudentDashboard/UniversityDetail";
+import CourseDetail from "./Dashboard/Student/StudentDashboard/CourseDetail";
+import RegistrationPage from "./Auth/Registration/RegistrationPage";
+import LoginPage from "./Auth/Login/LoginPage";
+import AssociateDashboard from "./Dashboard/Associate/AssociateDashboard";
 
 const App = () => {
-  const { isAuthenticated, role, platform_access } = useSelector((state) => state.auth);
+  const { isAuthenticated, role, platform_access } = useSelector(
+    (state) => state.auth
+  );
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -28,13 +33,18 @@ const App = () => {
 
   // 🔹 Student Route with Payment Check
   const StudentProtectedRoute = ({ children }) => {
-    const { isAuthenticated, role, platform_access, payment_prompt } = useSelector((state) => state.auth);
+    const { isAuthenticated, role, platform_access, payment_prompt } =
+      useSelector((state) => state.auth);
 
     if (!isAuthenticated) {
       return <Navigate to="/login" />;
     }
 
-    if (role === "student" && platform_access?.payment_required && !payment_prompt) {
+    if (
+      role === "student" &&
+      platform_access?.payment_required &&
+      !payment_prompt
+    ) {
       return (
         <Box sx={{ textAlign: "center", mt: 4 }}>
           <CircularProgress />
@@ -68,9 +78,16 @@ const App = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<h1 style={{ textAlign: "center" }}>Connect2Uni Website Content in this page</h1>} />
-        <Route path="register" element={<Registration />} />
-        <Route path="login" element={<Login />} />
+        <Route
+          path="/"
+          element={
+            <h1 style={{ textAlign: "center" }}>
+              Connect2Uni Website Content in this page
+            </h1>
+          }
+        />
+        <Route path="register" element={<RegistrationPage />} />
+        <Route path="login" element={<LoginPage />} />
         <Route
           path="agency/dashboard"
           element={
@@ -85,6 +102,15 @@ const App = () => {
           element={
             <ProtectedRoute>
               <UniversityDashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="associate/dashboard"
+          element={
+            <ProtectedRoute>
+              <AssociateDashboard />
             </ProtectedRoute>
           }
         />
@@ -105,6 +131,24 @@ const App = () => {
           element={
             <StudentProtectedRoute>
               <StudentDashboard />
+            </StudentProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/student/dashboard/university/:id"
+          element={
+            <StudentProtectedRoute>
+              <UniversityDetail />
+            </StudentProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/student/course/:courseId"
+          element={
+            <StudentProtectedRoute>
+              <CourseDetail />
             </StudentProtectedRoute>
           }
         />

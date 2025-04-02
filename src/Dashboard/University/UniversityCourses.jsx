@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Card, CardContent, Typography, Box, Grid, Modal } from '@mui/material';
+import { Button, Card, CardContent, Typography, Box, Grid, Modal, CircularProgress } from '@mui/material';
 import CreateCourseForm from './CreateCourseForm';
 import axios from 'axios';
 import Cookies from 'js-cookie';
@@ -67,7 +67,12 @@ const UniversityCourses = () => {
   };
 
   if (loading) {
-    return <Typography>Loading courses...</Typography>;
+    return <Box sx={{ textAlign: "center", mt: 4 }}>
+              <CircularProgress />
+              <Typography variant="h6" sx={{ mt: 2 }}>
+                Loading payment details...
+              </Typography>
+            </Box>
   }
 
   return (
@@ -107,9 +112,9 @@ const UniversityCourses = () => {
                 <Typography variant="body1" sx={{ marginBottom: 1 }}>
                   Fees: ${course.fees}
                 </Typography>
-                <Typography variant="body1" sx={{ marginBottom: 1 }}>
+                {/* <Typography variant="body1" sx={{ marginBottom: 1 }}>
                   Ratings: {course.ratings.length > 0 ? course.ratings.join(', ') : 'No ratings yet'}
-                </Typography>
+                </Typography> */}
               </CardContent>
             </Card>
           </Grid>

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { loginStart, loginSuccess, loginFailure } from "../../store/authSlice";
+import { loginStart, loginSuccess, loginFailure } from "../../../store/authSlice";
 import toast, { Toaster } from "react-hot-toast";
 import axios from "axios";
 import Cookies from "js-cookie";
@@ -19,7 +19,7 @@ import {
   InputAdornment,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import ResendVerificationCode from "./ResendVerificationCode"; // Import the new component
+import ResendVerificationCode from "../ResendVerificationCode"; // Import the new component
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -74,6 +74,8 @@ const Login = () => {
           navigate("/agent/dashboard");
         } else if (response.data.role === "University") {
           navigate("/university/dashboard");
+        } else if (response.data.role === "Associate"){
+          navigate("/associate/dashboard");
         }
 
         toast.success("Login Successful");
@@ -136,6 +138,11 @@ const Login = () => {
             autoFocus
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            sx={{
+              boxShadow: "4px 4px 4px 0px rgba(0, 0, 0, 0.25)",
+              borderRadius: "8px",
+              backgroundColor: "#FFF"
+            }}
           />
           <TextField
             margin="normal"
@@ -168,9 +175,20 @@ const Login = () => {
             }
             label="Remember me"
           />
-          <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }} disabled={loading}>
-            {loading ? "Logging in..." : "Login"}
-          </Button>
+         <Button 
+              type="submit" 
+              fullWidth 
+              variant="contained" 
+              sx={{ 
+                mt: 3, 
+                mb: 2, 
+                backgroundColor: '#004AAD', 
+                '&:hover': { backgroundColor: '#003B82' } // Darker shade on hover
+              }} 
+              disabled={loading}
+            >
+              {loading ? "Logging in..." : "Login"}
+         </Button>
           <Grid container>
             <Grid item xs>
               <Link href="#" variant="body2">
