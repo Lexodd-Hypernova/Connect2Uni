@@ -13,11 +13,11 @@ import {
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Box } from '@mui/system';
 import ApplicationStats from './ApplicationStats';
-import AssociateInfo from './AssociateInfo';
+import SolicitorInfo from './SolicitorInfo';
 
 // Example Components to Render
 const DashboardContent = () => <ApplicationStats />;
-const Associateinfo = () =>  <AssociateInfo />;
+const Soliciorinfo = () =>  <SolicitorInfo />;
 const StudentLists = () =>  <h1>3</h1>;
 const StudentApplication_Management = () =>  <h1>4</h1>;
 const Universityinfo = () =>  <h1>5</h1>;
@@ -69,12 +69,12 @@ const AssociateDashboard = () => {
             onChange={handleAccordionChange('agents')}
           >
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-              <ListItemText primary="Associates" />
+              <ListItemText primary="Solicitor" />
             </AccordionSummary>
             <AccordionDetails>
               <List>
-                <ListItem button onClick={handleItemClick(<Associateinfo />)}>
-                  <ListItemText primary="Associate Info" />
+                <ListItem button onClick={handleItemClick(<Soliciorinfo />)}>
+                  <ListItemText primary="Solicitor Info" />
                 </ListItem>
                 
                 <ListItem button onClick={handleItemClick(<div>Application Management</div>)}>

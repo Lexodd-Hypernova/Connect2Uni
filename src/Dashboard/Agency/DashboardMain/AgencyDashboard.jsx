@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import {
   List,
@@ -9,9 +8,11 @@ import {
   AccordionDetails,
   Drawer,
   Divider,
+  Button,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Box } from '@mui/system';
+import LogoutIcon from '@mui/icons-material/Logout'; // Import logout icon
 import Charts from './Charts/Charts';
 import AgentInfo from '../Agents/AgentInfo'
 import StudentList from '../Student/StudentList';
@@ -19,7 +20,7 @@ import StudentApplicationManagement from '../Student/StudentApplicationManagemen
 import UniversityInfo from '../University/UniversityInfo';
 import UniversityApplicationManagement from '../University/UniversityApplicationManagement';
 import AssociateList from '../Associate/AssociateList';
-
+import { useLogout } from '../../../Auth/Logout';
 
 // Example Components to Render
 const DashboardContent = () => <Charts />;
@@ -42,6 +43,8 @@ const AgencyDashboard = () => {
     setSelectedComponent(component); // Set the selected component to render
   };
 
+  const handleLogout = useLogout();
+
   return (
     <Box sx={{ display: 'flex' }}>
       {/* Sidebar */}
@@ -52,12 +55,15 @@ const AgencyDashboard = () => {
           '& .MuiDrawer-paper': {
             width: 240,
             boxSizing: 'border-box',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between', // This will push the logout button to the bottom
           },
         }}
         variant="permanent"
         anchor="left"
       >
-        <Box sx={{ width: '100%', padding: '16px 0px' }}>
+        <Box>
           <List>
             <ListItem
               button
@@ -150,10 +156,29 @@ const AgencyDashboard = () => {
                 <ListItem button>
                   <ListItemText primary="Option 2" />
                 </ListItem>
-                
               </List>
             </AccordionDetails>
           </Accordion>
+        </Box>
+
+        {/* Logout Button at the bottom */}
+        <Box sx={{ p: 2 }}>
+          <Button
+            variant="contained"
+            color="error"
+            fullWidth
+            startIcon={<LogoutIcon />}
+            onClick={handleLogout}
+            sx={{
+              mt: 2,
+              backgroundColor: '#d32f2f', // Darker red color
+              '&:hover': {
+                backgroundColor: '#b71c1c', // Even darker on hover
+              },
+            }}
+          >
+            Logout
+          </Button>
         </Box>
       </Drawer>
 
@@ -163,7 +188,7 @@ const AgencyDashboard = () => {
           flexGrow: 1,
           padding: 3,
           backgroundColor: '#f9f9f9',
-          minHeight: '100vh',
+          // minHeight: '100vh',
         }}
       >
         {selectedComponent}
