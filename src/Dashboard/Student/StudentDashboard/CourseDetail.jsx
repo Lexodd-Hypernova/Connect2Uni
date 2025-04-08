@@ -19,8 +19,8 @@ import {
   FormControlLabel,
   Checkbox,
 } from "@mui/material";
+import toast, { Toaster } from "react-hot-toast";
 import { Close, ArrowBack } from "@mui/icons-material"; // Import the close icon
-import toast from "react-hot-toast";
 import Cookies from "js-cookie";
 
 const CourseDetail = () => {
@@ -777,6 +777,7 @@ const CourseDetail = () => {
           </Typography>
         </Box>
       </Modal>
+      <Toaster position="top-center" reverseOrder={false} />
     </Box>
   );
 };

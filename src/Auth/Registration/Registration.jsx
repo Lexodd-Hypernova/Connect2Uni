@@ -1595,7 +1595,7 @@ const Registration = () => {
           </>
         )}
       </Box>
-      <Toaster />
+      <Toaster position="top-center" reverseOrder={false} />
     </Container>
   );
 };

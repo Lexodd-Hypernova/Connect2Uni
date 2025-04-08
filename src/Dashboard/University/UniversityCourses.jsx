@@ -3,7 +3,7 @@ import { Button, Card, CardContent, Typography, Box, Grid, Modal, CircularProgre
 import CreateCourseForm from './CreateCourseForm';
 import axios from 'axios';
 import Cookies from 'js-cookie';
-import toast from 'react-hot-toast';
+import toast, { Toaster } from 'react-hot-toast';
 
 const base_url = import.meta.env.VITE_API_URL;
 
@@ -120,6 +120,7 @@ const UniversityCourses = () => {
           </Grid>
         ))}
       </Grid>
+      <Toaster position="top-center" reverseOrder={false} />
     </Box>
   );
 };
