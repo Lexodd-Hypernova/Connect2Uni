@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   List,
   ListItem,
@@ -8,14 +8,16 @@ import {
   AccordionDetails,
   Drawer,
   Divider,
-} from '@mui/material';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { Box } from '@mui/system';
+  Button,
+} from "@mui/material";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { Box } from "@mui/system";
 // import Charts from './Charts/Charts';
 // import UniversityProfile from './University/UniversityProfile';
-// import StudentApplication from './Student/StudentApplication';
-import UniversityCourses from './UniversityCourses';
-import { useLogout } from '../../Auth/Logout';
+import StudentApplication from './Student/StudentApplication';
+import LogoutIcon from "@mui/icons-material/Logout";
+import UniversityCourses from "./Courses/UniversityCourses";
+import { useLogout } from "../../Auth/Logout";
 // import Payments from './Payments/Payments';
 
 // Example Components to Render
@@ -26,8 +28,10 @@ const CoursesContent = () => <UniversityCourses />;
 const PaymentsContent = () => <Payments />;
 
 const UniversityDashboard = () => {
-  const [expanded, setExpanded] = useState('dashboard'); // 'dashboard' is open by default
-  const [selectedComponent, setSelectedComponent] = useState(<DashboardContent />); // Default Content
+  const [expanded, setExpanded] = useState("dashboard"); // 'dashboard' is open by default
+  const [selectedComponent, setSelectedComponent] = useState(
+    <DashboardContent />
+  ); // Default Content
 
   const handleAccordionChange = (panel) => (event, isExpanded) => {
     setExpanded(isExpanded ? panel : false);
@@ -40,17 +44,17 @@ const UniversityDashboard = () => {
   const handleLogout = useLogout();
 
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box sx={{ display: "flex" }}>
       {/* Sidebar */}
       <Drawer
         sx={{
           width: 240,
           flexShrink: 0,
-          '& .MuiDrawer-paper': {
+          "& .MuiDrawer-paper": {
             width: 240,
-            boxSizing: 'border-box',
-            display: 'flex',
-            flexDirection: 'column',
+            boxSizing: "border-box",
+            display: "flex",
+            flexDirection: "column",
           },
         }}
         variant="permanent"
@@ -60,7 +64,7 @@ const UniversityDashboard = () => {
           <List>
             <ListItem
               button
-              selected={expanded === 'dashboard'}
+              selected={expanded === "dashboard"}
               onClick={handleItemClick(<DashboardContent />)}
             >
               <ListItemText primary="Dashboard" />
@@ -70,15 +74,18 @@ const UniversityDashboard = () => {
           <Divider />
 
           <Accordion
-            expanded={expanded === 'universityProfile'}
-            onChange={handleAccordionChange('universityProfile')}
+            expanded={expanded === "universityProfile"}
+            onChange={handleAccordionChange("universityProfile")}
           >
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
               <ListItemText primary="University Profile" />
             </AccordionSummary>
             <AccordionDetails>
               <List>
-                <ListItem button onClick={handleItemClick(<UniversityProfileContent />)}>
+                <ListItem
+                  button
+                  onClick={handleItemClick(<UniversityProfileContent />)}
+                >
                   <ListItemText primary="Profile Info" />
                 </ListItem>
               </List>
@@ -86,15 +93,18 @@ const UniversityDashboard = () => {
           </Accordion>
 
           <Accordion
-            expanded={expanded === 'studentApplication'}
-            onChange={handleAccordionChange('studentApplication')}
+            expanded={expanded === "studentApplication"}
+            onChange={handleAccordionChange("studentApplication")}
           >
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
               <ListItemText primary="Student Application" />
             </AccordionSummary>
             <AccordionDetails>
               <List>
-                <ListItem button onClick={handleItemClick(<StudentApplicationContent />)}>
+                <ListItem
+                  button
+                  onClick={handleItemClick(<StudentApplicationContent />)}
+                >
                   <ListItemText primary="Applications" />
                 </ListItem>
               </List>
@@ -102,8 +112,8 @@ const UniversityDashboard = () => {
           </Accordion>
 
           <Accordion
-            expanded={expanded === 'courses'}
-            onChange={handleAccordionChange('courses')}
+            expanded={expanded === "courses"}
+            onChange={handleAccordionChange("courses")}
           >
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
               <ListItemText primary="Courses" />
@@ -118,8 +128,8 @@ const UniversityDashboard = () => {
           </Accordion>
 
           <Accordion
-            expanded={expanded === 'payments'}
-            onChange={handleAccordionChange('payments')}
+            expanded={expanded === "payments"}
+            onChange={handleAccordionChange("payments")}
           >
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
               <ListItemText primary="Payments" />
@@ -134,14 +144,24 @@ const UniversityDashboard = () => {
           </Accordion>
         </Box>
 
-        {/* Logout Button at the Bottom */}
-        <Box sx={{ padding: 2 }}>
-          <Divider />
-          <List>
-            <ListItem button onClick={handleLogout}>
-              <ListItemText primary="Logout" />
-            </ListItem>
-          </List>
+        {/* Logout Button at the bottom */}
+        <Box sx={{ p: 2 }}>
+          <Button
+            variant="contained"
+            color="error"
+            fullWidth
+            startIcon={<LogoutIcon />}
+            onClick={handleLogout}
+            sx={{
+              mt: 2,
+              backgroundColor: "#d32f2f", // Darker red color
+              "&:hover": {
+                backgroundColor: "#b71c1c", // Even darker on hover
+              },
+            }}
+          >
+            Logout
+          </Button>
         </Box>
       </Drawer>
 
@@ -150,8 +170,8 @@ const UniversityDashboard = () => {
         sx={{
           flexGrow: 1,
           padding: 3,
-          backgroundColor: '#f9f9f9',
-          minHeight: '100vh',
+          backgroundColor: "#f9f9f9",
+          minHeight: "100vh",
         }}
       >
         {selectedComponent}

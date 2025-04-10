@@ -12,7 +12,7 @@ import {
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Box } from '@mui/system';
-import LogoutIcon from '@mui/icons-material/Logout'; // Import logout icon
+import LogoutIcon from '@mui/icons-material/Logout';
 import Charts from './Charts/Charts';
 import AgentInfo from '../Agents/AgentInfo'
 import StudentList from '../Student/StudentList';
